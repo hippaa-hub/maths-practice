@@ -62,6 +62,7 @@ export const compareRatios: Skill = {
       answer: { kind: 'choice', value: 0, choice: correctIndex }, answerText: correct,
       hint: `What fraction of each mix is ${stuff.part}? Compare the fractions (or percents), not the water.`,
       steps: [`A: ${a[0]} out of ${a[0]} + ${a[1]} = ${a[0] + a[1]} parts, so ${a[0]} ÷ ${a[0] + a[1]} = ${fmt(sa / 100)}, which is ${fmt(sa)}%`, `B: ${b[0]} out of ${b[0]} + ${b[1]} = ${b[0] + b[1]} parts, so ${b[0]} ÷ ${b[0] + b[1]} = ${fmt(sb / 100)}, which is ${fmt(sb)}%`, sa === sb ? 'The percents are equal, so the mixes are the same strength' : `${fmt(Math.max(sa, sb))}% is more, so Mix ${sa > sb ? 'A' : 'B'} is ${stuff.q}`],
+      revealPicture: true,
       picture: { type: 'compare', rows: [{ label: `A: ${fmt(sa)}%`, value: sa, tone: sa >= sb ? 'green' : 'orange' }, { label: `B: ${fmt(sb)}%`, value: sb, tone: sb >= sa ? 'green' : 'orange' }] },
       choices, traps: [],
     };

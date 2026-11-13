@@ -293,8 +293,8 @@ function TriangleArea({ spec }: { spec: Extract<PictureSpec, { type: 'triangleAr
       <polygon points={`${A} ${B} ${C}`} fill="#d7ffb8" stroke={INK} strokeWidth={3} strokeLinejoin="round" />
       <line x1={C[0]} y1={C[1]} x2={C[0]} y2={A[1]} stroke="#ff9600" strokeWidth={3} strokeDasharray="6 5" />
       <rect x={C[0] - 10} y={A[1] - 10} width={10} height={10} fill="none" stroke={INK} strokeWidth={2} />
-      <text x={(A[0] + B[0]) / 2} y={A[1] + 22} textAnchor="middle" fontSize="15" fontWeight="800" fill={INK}>base {spec.base} {u}</text>
-      <text x={C[0] + 8} y={(C[1] + A[1]) / 2} fontSize="15" fontWeight="800" fill="#e08600">h = {spec.height} {u}</text>
+      <text x={(A[0] + B[0]) / 2} y={A[1] + 22} textAnchor="middle" fontSize="15" fontWeight="800" fill={INK}>base {spec.base ? `${spec.base} ${u}` : '?'}</text>
+      <text x={C[0] + 8} y={(C[1] + A[1]) / 2} fontSize="15" fontWeight="800" fill="#e08600">h = {spec.height ? `${spec.height} ${u}` : '?'}</text>
     </svg>
   );
 }

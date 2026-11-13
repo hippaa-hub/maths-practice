@@ -64,6 +64,8 @@ export interface Question {
   hint: string;
   steps: string[];
   picture?: Picture;
+  /** True when the picture would give the answer away: show it only after she has answered. */
+  revealPicture?: boolean;
   traps: Trap[];
   /** The numbers the question was built from; tests recompute the answer from these. */
   params: Record<string, number>;

@@ -101,6 +101,7 @@ export const pctOfAmount: Skill = {
       answerText: `${fmt(value)}${unit}`,
       hint: `OF means multiply. ${p % 10 === 0 || p === 5 || p === 15 || p === 35 ? `Start with 10% of ${fmt(a)}: that is ${fmt(a / 10)}.` : p === 25 || p === 75 || p === 12.5 ? `Start with 50% of ${fmt(a)}: that is ${fmt(a / 2)}.` : `Start with 1% of ${fmt(a)}: that is ${fmt(a / 100)}.`}`,
       steps: [...steps, ctx.kind === 'money' ? `Answer: ${gel(value)}` : `Answer: ${fmt(value)}${unit}`],
+      revealPicture: true,
       picture: picture(p, a),
       traps,
     };

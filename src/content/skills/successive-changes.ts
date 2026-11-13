@@ -63,6 +63,7 @@ export const successiveChanges: Skill = {
       answer: { kind: money ? 'money' : 'number', value: r }, answerText: money ? gel(r) : fmt(r),
       hint: 'Do the first change, then do the second change on the NEW amount (not on the original).',
       steps: [`First change: ${Math.abs(p1)}% of ${fmt(a)} = ${fmt(d1)}`, `${fmt(a)} ${p1 > 0 ? '+' : '−'} ${fmt(d1)} = ${fmt(mid)}`, `Second change works on ${fmt(mid)}: ${Math.abs(p2)}% of ${fmt(mid)} = ${fmt(d2)}`, `${fmt(mid)} ${p2 > 0 ? '+' : '−'} ${fmt(d2)} = ${fmt(r)}`, `Multiplier check: ${1 + p1 / 100} × ${1 + p2 / 100} = ${fmt(clean((1 + p1 / 100) * (1 + p2 / 100)))}`],
+      revealPicture: true,
       picture: { type: 'compare', rows: [{ label: `Start: ${fmt(a)}`, value: a, tone: 'blue' }, { label: `Then: ${fmt(mid)}`, value: mid, tone: p1 > 0 ? 'green' : 'orange' }, { label: `Final: ${fmt(r)}`, value: r, tone: p2 > 0 ? 'green' : 'orange' }] },
       traps: [
         { value: clean(a * (1 + (p1 + p2) / 100)), misconception: 'added-percents', message: `You added the percentages (${p1 + p2}%). The second change is a percentage of ${fmt(mid)}, not of ${fmt(a)}.` },

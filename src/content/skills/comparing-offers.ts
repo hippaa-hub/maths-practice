@@ -132,6 +132,7 @@ export const comparingOffers: Skill = {
       answerText: `Shop ${cheaper}, by ${gel(diff)}`,
       hint: 'Work out what you would actually pay in each shop. Then subtract.',
       steps: stepsFor(params, f1, f2),
+      revealPicture: true,
       picture: picture(f1, f2),
       traps,
     };

@@ -97,6 +97,7 @@ export const ratioShare: Skill = {
           : `First share: ${a} × ${one} = ${r}`,
         askDiff ? `Difference: ${Math.max(a, b) * one} − ${Math.min(a, b) * one} = ${r}` : `Check: ${c ? `${a * one} + ${b * one} + ${c * one}` : `${a * one} + ${b * one}`} = ${total}`,
       ],
+      revealPicture: true,
       picture: { type: 'bar', parts, shaded: a, totalLabel: `${total} = ${parts} parts`, shadedLabel: `${a} parts`, partLabel: `1 part = ${one}` },
       traps,
     };

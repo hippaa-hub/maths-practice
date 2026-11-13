@@ -116,6 +116,7 @@ export const unitRatesBestBuy: Skill = {
       answerText: `Pack ${better}, ${gel(best)} per ${g.unit}`,
       hint: 'PER means divide. Work out the price for ONE in each pack, then pick the lower one.',
       steps: [`Pack A: ${fmt(pa)} ÷ ${qa} = ${fmt(ua)} per ${g.unit}`, `Pack B: ${fmt(pb)} ÷ ${qb} = ${fmt(ub)} per ${g.unit}`, `${fmt(best)} is less than ${fmt(Math.max(ua, ub))}, so Pack ${better} is better value.`],
+      revealPicture: true,
       picture: { type: 'compare', rows: [{ label: `A: ${fmt(ua)} each`, value: ua, tone: better === 'A' ? 'green' : 'blue' }, { label: `B: ${fmt(ub)} each`, value: ub, tone: better === 'B' ? 'green' : 'blue' }] },
       traps,
     };

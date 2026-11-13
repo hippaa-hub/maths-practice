@@ -104,6 +104,7 @@ export const fdpConversions: Skill = {
         answerText: fmt(d),
         hint: 'Percent means out of 100. Divide by 100.',
         steps: [`${fmt(p)}% means ${fmt(p)} out of 100`, `${fmt(p)} ÷ 100 = ${fmt(d)}`],
+        revealPicture: true,
         picture: picture(p),
         traps: [
           { value: p, misconception: 'no-divide', message: `${fmt(p)} is the percent. Divide by 100 to get the decimal: ${fmt(d)}.` },
@@ -122,6 +123,7 @@ export const fdpConversions: Skill = {
         answerText: `${fmt(p)}%`,
         hint: 'To turn a decimal into a percent, multiply by 100.',
         steps: [`${fmt(d)} × 100 = ${fmt(p)}`, `So ${fmt(d)} = ${fmt(p)}%`],
+        revealPicture: true,
         picture: picture(p),
         traps: [
           { value: d, misconception: 'no-multiply', message: `${fmt(d)} is the decimal. Multiply by 100 to get the percent: ${fmt(p)}%.` },
@@ -141,6 +143,7 @@ export const fdpConversions: Skill = {
         answerText: `${fmt(p)}%`,
         hint: 100 % den === 0 ? `Make the bottom number 100: ${den} × ${100 / den} = 100. Then multiply the top by ${100 / den} as well; the top number is the percent.` : `A fraction is a division: work out ${num} ÷ ${den}, then × 100.`,
         steps: fractionToPercentSteps(num, den, p),
+        revealPicture: true,
         picture: picture(p),
         traps: [
           { value: digits, misconception: 'digits', message: `${num}/${den} is not ${digits}%. The bottom number must become 100.` },
@@ -161,6 +164,7 @@ export const fdpConversions: Skill = {
         answerText: `${n}/${d}`,
         hint: `${p}% is ${p} out of 100. Write that as a fraction, then simplify.`,
         steps: [`${p}% = ${p}/100`, g === 1 ? 'It is already in its simplest form.' : `Divide top and bottom by ${g}`, `${p}/100 = ${n}/${d}`],
+        revealPicture: true,
         picture: picture(p),
         traps: [
           { value: p, misconception: 'no-divide', message: `${p}% means ${p} out of 100, so the fraction is ${p}/100 = ${n}/${d}.` },
@@ -183,6 +187,7 @@ export const fdpConversions: Skill = {
         answerText: `${n}/${dd}`,
         hint: `${fmt(d)} is ${num} ${den === 100 ? 'hundredths' : 'thousandths'}.`,
         steps: [`${fmt(d)} = ${num}/${den}`, g === 1 ? 'It is already in its simplest form.' : `Divide top and bottom by ${g}`, `${num}/${den} = ${n}/${dd}`],
+        revealPicture: true,
         picture: picture(p),
         traps: [
           { value: clean(num / 100) === d ? num / 10 : num / 100, misconception: 'wrong-denominator' },
@@ -201,6 +206,7 @@ export const fdpConversions: Skill = {
       answerText: fmt(d),
       hint: `A fraction is a division: ${num} ÷ ${den}.`,
       steps: [`${num}/${den} means ${num} ÷ ${den}`, `${num} ÷ ${den} = ${fmt(d)}`],
+      revealPicture: true,
       picture: picture(clean(d * 100)),
       traps: [
         { value: Number(`${num}.${den}`), misconception: 'digits', message: `${num}/${den} is a division, ${num} ÷ ${den}, not the digits ${num}.${den}.` },

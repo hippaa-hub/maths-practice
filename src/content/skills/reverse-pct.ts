@@ -107,6 +107,7 @@ export const reversePct: Skill = {
         `1% of the original = ${fmt(after)} ÷ ${fmt(pct)} = ${fmt(one)}`,
         `Original = ${fmt(one)} × 100 = ${fmt(orig)}${unit}`,
       ],
+      revealPicture: true,
       picture: picture(p, dir, after),
       traps,
     };

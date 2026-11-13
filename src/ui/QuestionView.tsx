@@ -53,7 +53,7 @@ export function QuestionView({ question, skillTitle, misconceptions, example, on
       <div className="card stack">
         <span className="chip">{skillTitle}</span>
         <p className="qtext">{question.text}</p>
-        {question.picture && <Picture spec={question.picture} />}
+        {question.picture && (!question.revealPicture || result) && <Picture spec={question.picture} />}
       </div>
 
       {hintShown && (
