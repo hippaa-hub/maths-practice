@@ -113,7 +113,7 @@ export const pctOneOfAnother: Skill = {
       text: ctx.text(part, whole),
       answer: { kind: 'percent', value: p },
       answerText: `${fmt(p)}%`,
-      hint: 100 % whole === 0 && whole <= 50 ? `What do you multiply ${whole} by to get 100?` : `Divide ${part} by ${whole}, then × 100.`,
+      hint: 100 % whole === 0 && whole <= 50 ? `Make the whole into 100: ${whole} × ${100 / whole} = 100. Then multiply the part by ${100 / whole} as well; that gives the percent.` : `Divide ${part} by ${whole}, then × 100.`,
       steps: steps(part, whole, p),
       picture: picture(Math.min(part, whole), whole),
       traps,

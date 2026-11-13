@@ -75,7 +75,7 @@ export const fractionsSimplify: Skill = {
         text: `Write ${num}/${den} in its simplest form.`,
         answer: { kind: 'fraction', value: sn / sd, ratio: [sn, sd], simplest: true },
         answerText: `${sn}/${sd}`,
-        hint: `What is the biggest number that goes into both ${num} and ${den}?`,
+        hint: `Find the biggest number that goes into both ${num} and ${den}, then divide the top and the bottom by it.`,
         steps: [`${g} goes into both ${num} and ${den}`, `Divide top and bottom by ${g}: ${num}/${den} = ${sn}/${sd}`, `Nothing else goes into both ${sn} and ${sd}, so ${sn}/${sd} is the simplest form`],
         picture: { type: 'bar', parts: den <= 16 ? den : sd, shaded: den <= 16 ? num : sn, totalLabel: `${num}/${den}` },
         traps,

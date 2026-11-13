@@ -139,7 +139,7 @@ export const fdpConversions: Skill = {
         text: `Write ${num}/${den} as a percent.`,
         answer: { kind: 'percent', value: p },
         answerText: `${fmt(p)}%`,
-        hint: 100 % den === 0 ? `What do you multiply ${den} by to get 100?` : `Work out ${num} ÷ ${den} first.`,
+        hint: 100 % den === 0 ? `Make the bottom number 100: ${den} × ${100 / den} = 100. Then multiply the top by ${100 / den} as well; the top number is the percent.` : `A fraction is a division: work out ${num} ÷ ${den}, then × 100.`,
         steps: fractionToPercentSteps(num, den, p),
         picture: picture(p),
         traps: [
