@@ -86,6 +86,7 @@ export const negAddSub: Skill = {
         answerText: neg(r),
         hint: kind === 0 ? `Start at ${neg(a)} and count ${b} to the right.` : `Start at ${neg(a)} and count ${b} to the left.`,
         steps: [`Start at ${neg(a)} on the number line`, kind === 0 ? `Adding moves right: ${neg(a)} + ${b} = ${neg(r)}` : `Subtracting moves left: ${neg(a)} − ${b} = ${neg(r)}`],
+        revealPicture: true,
         picture: picture(a, r),
         traps,
       };
@@ -109,6 +110,7 @@ export const negAddSub: Skill = {
         steps: kind === 2
           ? [`Two minus signs together make a plus: ${neg(a)} − (${neg(-b)}) = ${neg(a)} + ${b}`, `${neg(a)} + ${b} = ${neg(r)}`]
           : [`Plus a negative is a minus: ${neg(a)} + (${neg(-b)}) = ${neg(a)} − ${b}`, `${neg(a)} − ${b} = ${neg(r)}`],
+        revealPicture: true,
         picture: picture(a, r),
         traps,
       };
@@ -126,6 +128,7 @@ export const negAddSub: Skill = {
         answerText: neg(r),
         hint: 'Work from left to right, one step at a time.',
         steps: [`First: ${neg(a)} − ${b} = ${neg(mid)}`, `Then: ${neg(mid)} + ${c} = ${neg(r)}`],
+        revealPicture: true,
         picture: picture(a, r),
         traps: [
           { value: a - b - c, misconception: 'wrong-direction' },
@@ -143,6 +146,7 @@ export const negAddSub: Skill = {
       answerText: `${r} degrees`,
       hint: `Count from ${neg(lo)} up to 0, then from 0 up to ${hi}.`,
       steps: [`From ${neg(lo)} up to 0 is ${-lo} degrees`, `From 0 up to ${hi} is ${hi} degrees`, `${-lo} + ${hi} = ${r}`],
+      revealPicture: true,
       picture: picture(lo, hi),
       traps: [
         { value: hi + lo, misconception: 'ignored-sign', message: `The difference between ${neg(lo)} and ${hi} crosses zero, so add the two distances: ${-lo} + ${hi}.` },

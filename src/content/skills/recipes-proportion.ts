@@ -79,7 +79,7 @@ export const recipesProportion: Skill = {
         answerText: `${to} people`,
         hint: `How much ${ing} does ONE person need? Then see how many times that goes into ${have}.`,
         steps: [`For one person: ${amount} ÷ ${from} = ${per}`, `How many ${per}s in ${have}? ${have} ÷ ${per} = ${to}`, `So ${to} people.`],
-        picture: { type: 'doubleLine', top: { label: 'people', values: [1, from, to] }, bottom: { label: ing, values: [per, amount, have] } },
+        picture: { type: 'doubleLine', top: { label: 'people', values: [1, from, '?' as unknown as number] }, bottom: { label: ing, values: ['?' as unknown as number, amount, have] } },
         traps,
       };
     }
@@ -100,7 +100,7 @@ export const recipesProportion: Skill = {
       answerText: `${fmt(r)} ${unit}`,
       hint: `First find the ${ing} for ONE person: ${amount} ÷ ${from}.`,
       steps: [`For one person: ${amount} ÷ ${from} = ${per}`, `For ${to} people: ${to} × ${per} = ${r}`, `So ${r} ${unit} of ${ing}.`],
-      picture: { type: 'doubleLine', top: { label: 'people', values: [1, from, to] }, bottom: { label: ing, values: [per, amount, r] } },
+      picture: { type: 'doubleLine', top: { label: 'people', values: [1, from, to] }, bottom: { label: ing, values: ['?' as unknown as number, amount, '?' as unknown as number] } },
       traps,
     };
   },

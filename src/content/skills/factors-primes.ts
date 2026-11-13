@@ -61,7 +61,7 @@ export const factorsPrimes: Skill = {
     const big = primes[primes.length - 1];
     let m = n; const chain: string[] = [];
     for (const p of primes) while (m % p === 0) { chain.push(`${m} = ${p} × ${m / p}`); m /= p; }
-    return { ...base, params: { n, kind }, text: `What is the largest prime factor of ${n}?`, answer: { kind: 'number', value: big }, answerText: String(big), hint: 'Keep dividing by small primes (2, 3, 5, 7, 11) until only a prime is left.', steps: [...chain.slice(0, 4), `So ${n} = ${primes.join(' × ')}${primes.length === factorsOf(n).filter(isPrime).length ? '' : ''} (with repeats), and the largest prime factor is ${big}`], traps: [{ value: factorsOf(n)[factorsOf(n).length - 2], misconception: 'not-prime', message: 'That is the largest factor apart from the number itself, but it is not prime.' }, { value: primes[0], misconception: 'smallest' }].filter((t) => t.value !== big) };
+    return { ...base, params: { n, kind }, text: `What is the largest prime factor of ${n}?`, answer: { kind: 'number', value: big }, answerText: String(big), hint: 'Keep dividing by the smallest prime that fits until only a prime is left.', steps: [...chain.slice(0, 4), `So ${n} = ${primes.join(' × ')}${primes.length === factorsOf(n).filter(isPrime).length ? '' : ''} (with repeats), and the largest prime factor is ${big}`], traps: [{ value: factorsOf(n)[factorsOf(n).length - 2], misconception: 'not-prime', message: 'That is the largest factor apart from the number itself, but it is not prime.' }, { value: primes[0], misconception: 'smallest' }].filter((t) => t.value !== big) };
   },
   compute: ({ n, kind }) => {
     const f = factorsOf(n);

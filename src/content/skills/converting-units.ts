@@ -99,7 +99,7 @@ export const convertingUnits: Skill = {
         ...base, params: { big, factor: c.factor, toSmall: 1, extra: 0 },
         text: `Change ${fmt(big)} ${c.big} into ${c.small}.`,
         answer: { kind: 'number', value: small }, answerText: `${fmt(small)} ${c.small}`,
-        hint: `1 ${c.big.replace(/s$/, '')} is ${c.factor} ${c.small}. Multiply.`,
+        hint: big === 1 ? `How many ${c.small} make one ${c.big.replace(/s$/, '')}? That is the answer.` : `Remember how many ${c.small} make one ${c.big.replace(/s$/, '')}, then multiply by ${fmt(big)}.`,
         steps: [`1 ${c.big.replace(/s$/, '')} is ${c.factor} ${c.small}, so multiply by ${c.factor}`, `${fmt(big)} × ${c.factor} = ${fmt(small)}`, `So ${fmt(small)} ${c.small}.`],
         traps,
       };
@@ -112,7 +112,7 @@ export const convertingUnits: Skill = {
       ...base, params: { big, factor: c.factor, toSmall: 0, extra: 0 },
       text: `Change ${fmt(small)} ${c.small} into ${c.big}.`,
       answer: { kind: 'number', value: big }, answerText: `${fmt(big)} ${c.big}`,
-      hint: `${c.factor} ${c.small} make 1 ${c.big.replace(/s$/, '')}. Divide.`,
+      hint: big === 1 ? `How many ${c.small} make one ${c.big.replace(/s$/, '')}? Compare with ${fmt(small)}.` : `Remember how many ${c.small} make one ${c.big.replace(/s$/, '')}, then divide ${fmt(small)} by it.`,
       steps: [`${c.factor} ${c.small} make 1 ${c.big.replace(/s$/, '')}, so divide by ${c.factor}`, `${fmt(small)} ÷ ${c.factor} = ${fmt(big)}`, `So ${fmt(big)} ${c.big}.`],
       traps,
     };

@@ -82,6 +82,7 @@ export const fractionOfAmount: Skill = {
       answerText: `${fmt(r)}${ctx.unit}`,
       hint: `First find 1/${d} of ${fmt(a)}: divide by ${d}.`,
       steps: [`Divide by the bottom: ${fmt(a)} ÷ ${d} = ${fmt(one)}`, `Multiply by the top: ${n} × ${fmt(one)} = ${fmt(r)}`, `Answer: ${fmt(r)}${ctx.unit}`],
+      revealPicture: true,
       picture: { type: 'bar', parts: d, shaded: n, totalLabel: `${fmt(a)}`, shadedLabel: `${n}/${d} = ${fmt(r)}`, partLabel: `1/${d} = ${fmt(one)}` },
       traps,
     };

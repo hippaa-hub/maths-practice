@@ -11,7 +11,7 @@ const RULES: Record<number, string> = {
   4: 'A number is divisible by 4 if its last two digits make a number divisible by 4.',
   5: 'A number is divisible by 5 if it ends in 0 or 5.',
   8: 'A number is divisible by 8 if its last three digits make a number divisible by 8.',
-  6: 'A number is divisible by 6 if it is divisible by both 2 and 3.',
+  6: 'A number is divisible by six if it passes the tests for two AND for three.',
   9: 'A number is divisible by 9 if its digit sum is in the 9 times table.',
   10: 'A number is divisible by 10 if it ends in 0.',
 };

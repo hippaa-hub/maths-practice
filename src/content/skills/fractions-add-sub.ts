@@ -107,6 +107,7 @@ export const fractionsAddSub: Skill = {
       answerText: `${sn}/${sd}`,
       hint: b === d ? 'The bottoms are the same, so just work with the tops.' : `What number do ${b} and ${d} both go into?`,
       steps,
+      revealPicture: true,
       picture: { type: 'bar', parts: L <= 16 ? L : sd, shaded: L <= 16 ? top : sn, totalLabel: `${sn}/${sd}` },
       traps,
     };

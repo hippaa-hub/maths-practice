@@ -102,6 +102,7 @@ export const scaleDrawings: Skill = {
         answer: { kind: 'number', value: km }, answerText: `${fmt(km)} km`,
         hint: `Multiply by ${scale} to get cm, then divide by 100 000 to get km.`,
         steps: [`Map → real: multiply by ${scale}`, `${fmt(cm)} × ${scale} = ${cm * scale}`, `${cm * scale} cm is ${cm * scale} ÷ 100000 = ${fmt(km)} km`, `So ${fmt(km)} km.`],
+        revealPicture: true,
         picture: { type: 'doubleLine', top: { label: 'map (cm)', values: [1, cm] }, bottom: { label: 'real (km)', values: [clean(scale / 100000), '?' as unknown as number] } },
         traps: [
           { value: cm * scale, misconception: 'units', message: `${cm * scale} is in cm. For km, divide by 100 000.` },

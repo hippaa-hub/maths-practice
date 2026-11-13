@@ -100,7 +100,7 @@ export const reversePct: Skill = {
       text: ctx.text(p, after),
       answer: { kind: ctx.kind, value: orig },
       answerText: `${fmt(orig)}${unit}`,
-      hint: `To find the WHOLE from a part, divide. ${fmt(after)} is ${fmt(pct)}% of the original: divide by ${fmt(pct)} to find 1%, then × 100.`,
+      hint: `To find the WHOLE from a part, divide. ${fmt(after)} is ${fmt(pct)}% of the original: divide by ${fmt(pct)}% to find 1%, then find 100%.`,
       steps: [
         dir === -1 ? `100% − ${fmt(p)}% = ${fmt(pct)}%` : `100% + ${fmt(p)}% = ${fmt(pct)}%`,
         `So ${fmt(after)}${unit} is ${fmt(pct)}% of the original`,

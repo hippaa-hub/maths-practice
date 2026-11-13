@@ -73,6 +73,7 @@ export const profitLoss: Skill = {
         answerText: gel(sell),
         hint: `Find ${p}% of ${cost}, then add it to the cost price.`,
         steps: [...steps, `Selling price = ${cost} + ${fmt(clean(cost * p / 100))} = ${fmt(sell)}`],
+        revealPicture: true,
         picture: picture(cost, sell),
         traps: [
           { value: clean(cost * p / 100), misconception: 'profit-only' },
@@ -133,6 +134,7 @@ export const profitLoss: Skill = {
         `${fmt(dec)} × 100 = ${fmt(p)}`,
         `So a ${fmt(p)}% ${profit ? 'profit' : 'loss'}.`,
       ],
+      revealPicture: true,
       picture: picture(cost, sell),
       traps,
     };

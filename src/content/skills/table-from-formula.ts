@@ -64,7 +64,7 @@ export const tableFromFormula: Skill = {
         sub ? `${b} − ${br(prod)} = ${neg(r)}` : b === 0 ? `So y = ${neg(r)}` : `${neg(prod)} ${b > 0 ? '+' : '−'} ${Math.abs(b)} = ${neg(r)}`,
         `So y = ${neg(r)}.`,
       ],
-      picture: { type: 'table', headers: ['x', ...[1, 2, 3].map(String), neg(x)], rows: [[`y = ${f}`, ...[1, 2, 3].map((v) => neg(sub ? b - a * v : a * v + b)), '?']] },
+      picture: { type: 'table', headers: ['x', ...[1, 2, 3].filter((v) => v !== x).map(String), neg(x)], rows: [[`y = ${f}`, ...[1, 2, 3].filter((v) => v !== x).map((v) => neg(sub ? b - a * v : a * v + b)), '?']] },
       traps,
     };
   },

@@ -98,7 +98,7 @@ export const decimalsX10: Skill = {
       text: `Work out ${fmt(a)} ${op === 0 ? '×' : '÷'} ${power}.`,
       answer: { kind: 'number', value: r },
       answerText: fmt(r),
-      hint: `${op === 0 ? '×' : '÷'} ${power} moves every digit ${places} place${places > 1 ? 's' : ''} to the ${op === 0 ? 'left' : 'right'}.`,
+      hint: `${op === 0 ? '×' : '÷'} ${power} moves every digit ${['one', 'two', 'three'][places - 1]} place${places > 1 ? 's' : ''} to the ${op === 0 ? 'left' : 'right'}.`,
       steps: [`${op === 0 ? '×' : '÷'} ${power} moves every digit ${places} place${places > 1 ? 's' : ''} to the ${op === 0 ? 'left' : 'right'}`, `${fmt(a)} ${op === 0 ? '×' : '÷'} ${power} = ${fmt(r)}`],
       traps,
     };

@@ -82,7 +82,7 @@ export const ratioEquivalent: Skill = {
         `Multiply the ${askSecond ? 'second' : 'first'} part by ${k} too: ${askSecond ? b : a} × ${k} = ${answer}`,
         `So ${a}:${b} = ${a * k}:${b * k}`,
       ],
-      picture: { type: 'table', headers: ['first', 'second'], rows: [[a, b], [`× ${k}`, `× ${k}`], [askSecond ? given : '?', askSecond ? '?' : given]] },
+      picture: { type: 'table', headers: ['first', 'second'], rows: [[a, b], ['× ?', '× ?'], [askSecond ? given : '?', askSecond ? '?' : given]] },
       traps,
     };
   },
