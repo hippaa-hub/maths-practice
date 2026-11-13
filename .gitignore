@@ -1,0 +1,10 @@
+node_modules
+dist
+.DS_Store
+
+# Private notes stay on this Mac (names, school, progress)
+PLAN.md
+SCHOOL.md
+STUDIED.md
+PROGRESS.md
+dev-dist
