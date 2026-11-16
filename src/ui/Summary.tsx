@@ -19,9 +19,11 @@ interface Props {
   xpGained?: number;
   newBadges?: string[];
   corrected?: string[];
+  canDoBefore?: number;
+  canDoNow?: number;
 }
 
-export function Summary({ summary, skills, minutes, onHome, mode = 'mix', xpGained = 0, newBadges = [], corrected = [] }: Props) {
+export function Summary({ summary, skills, minutes, onHome, mode = 'mix', xpGained = 0, newBadges = [], corrected = [], canDoBefore, canDoNow }: Props) {
   const remember = summary.rememberSkill ?? summary.newlyLearned[0] ?? summary.stronger[0] ?? summary.weaker[0];
   const title = (id: string) => skills[id]?.title ?? id;
   const comment = lolaComment(summary, title, corrected);
@@ -41,6 +43,13 @@ export function Summary({ summary, skills, minutes, onHome, mode = 'mix', xpGain
       </div>
 
       <div className="bubble" role="status">{comment}</div>
+
+      {canDoNow !== undefined && (
+        <p className="cando-line">
+          🐾 {canDoNow} skill{canDoNow === 1 ? '' : 's'} you can do
+          {canDoBefore !== undefined && canDoNow > canDoBefore && <span className="good"> (+{canDoNow - canDoBefore} in this {mode === 'lesson' ? 'lesson' : mode === 'practice' ? 'practice' : 'mix'}!)</span>}
+        </p>
+      )}
 
       {newBadges.length > 0 && (
         <div className="card stack">

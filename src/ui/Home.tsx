@@ -1,8 +1,10 @@
 import type { Skill } from '../content';
 import type { DateKey } from '../engine/dates';
-import { isDue, stateOf } from '../engine/spacing';
+import { isDue } from '../engine/spacing';
 import { minutesThisWeek, practiceDaysThisWeek } from '../engine/stats';
 import type { AnswerRecord, ProgressMap } from '../engine/types';
+import { LEVELS, levelsReached, weekGain, type MasteryLog } from '../engine/mastery';
+import { SKILL_METAS } from '../content';
 import { Badges } from './Badges';
 import { Button } from './Button';
 import { Mascot, type Mood } from './Mascot';
@@ -21,18 +23,20 @@ interface Props {
   canStart: boolean;
   onStart: () => void;
   onMap: () => void;
+  onProgress: () => void;
+  canDo: number;
+  masteryLog?: MasteryLog;
   xp: number;
   badges: Set<string>;
   muted: boolean;
   onToggleMute: () => void;
 }
 
-export function Home({ name, skills, progress, log, today, message, mood, canStart, onStart, onMap, xp, badges, muted, onToggleMute }: Props) {
+export function Home({ name, skills, progress, log, today, message, mood, canStart, onStart, onMap, onProgress, canDo, masteryLog, xp, badges, muted, onToggleMute }: Props) {
   const days = practiceDaysThisWeek(log, today).length;
   const minutes = minutesThisWeek(log, today);
-  const states = skills.map((s) => (progress[s.id] ? stateOf(progress[s.id]) : 'new'));
-  const strong = states.filter((s) => s === 'strong' || s === 'mastered').length;
-  const learning = states.filter((s) => s === 'learning').length;
+  const gain = weekGain(masteryLog, canDo, today);
+  const reached = levelsReached(progress, SKILL_METAS, today);
   const due = skills.filter((s) => progress[s.id] && isDue(progress[s.id], today)).length;
   return (
     <div className="screen">
@@ -51,6 +55,19 @@ export function Home({ name, skills, progress, log, today, message, mood, canSta
         <p className="muted small center">{canStart ? `About 10 minutes · ${due} to review today` : 'All done for today — see you tomorrow!'}</p>
       </div>
 
+      <button type="button" className="cando-strip" onClick={onProgress} aria-label={`${canDo} skills you can do. See my progress`}>
+        <span className="paw" aria-hidden="true">🐾</span>
+        <span className="num">{canDo}</span>
+        <span className="grow">
+          <b>skill{canDo === 1 ? '' : 's'} you can do</b>
+          <span className="muted small">
+            {gain > 0 ? <strong className="good">+{gain} this week · </strong> : null}
+            Level {reached} of {LEVELS.length} · see my progress
+          </span>
+        </span>
+        <span aria-hidden="true">›</span>
+      </button>
+
       <div className="card stack">
         <div className="row">
           <h2 className="grow">This week</h2>
@@ -66,13 +83,8 @@ export function Home({ name, skills, progress, log, today, message, mood, canSta
 
       <div className="card stack">
         <div className="row">
-          <h2 className="grow">Skills</h2>
+          <h2 className="grow">Skills · {skills.length}</h2>
           <Button tone="ghost" small onClick={onMap}>See the map</Button>
-        </div>
-        <div className="row">
-          <div className="stat"><b>{strong}</b><span className="muted small">strong</span></div>
-          <div className="stat"><b>{learning}</b><span className="muted small">learning</span></div>
-          <div className="stat"><b>{skills.length - strong - learning}</b><span className="muted small">to come</span></div>
         </div>
       </div>
 

@@ -27,13 +27,16 @@ interface Props {
   onFinish?: (summary: SessionSummary, minutes: number) => void;
   xpBefore: number;
   xpNow: number;
+  /** Skills she can do at the start of this session and right now (the summary shows the difference). */
+  canDoBefore?: number;
+  canDoNow?: number;
   badgesBefore: Set<string>;
   badgesNow: Set<string>;
   muted: boolean;
   onToggleMute: () => void;
 }
 
-export function Session({ sessionId, items, progress: initialProgress, skills, today, rng, onRecord, onHome, onQuestion, onHunt, mode = 'mix', onFinish, xpBefore, xpNow, badgesBefore, badgesNow, muted, onToggleMute }: Props) {
+export function Session({ sessionId, items, progress: initialProgress, skills, today, rng, onRecord, onHome, onQuestion, onHunt, mode = 'mix', onFinish, xpBefore, xpNow, canDoBefore, canDoNow, badgesBefore, badgesNow, muted, onToggleMute }: Props) {
   const [running, setRunning] = useState<RunningSession>(() => startSession(sessionId, today, items, Date.now(), mode));
   const [progress, setProgress] = useState(initialProgress);
   const [elapsed, setElapsed] = useState(0);
@@ -83,7 +86,7 @@ export function Session({ sessionId, items, progress: initialProgress, skills, t
   if (summary) {
     const corrected = running.results.filter((r) => r.outcome !== 'miss' && running.items.find((i) => i.id === r.itemId)?.reason === 'retry').map((r) => r.skillId);
     const newBadges = [...badgesNow].filter((b) => !badgesBefore.has(b));
-    return <Summary summary={summary} skills={skills} minutes={minutes} onHome={onHome} mode={mode} xpGained={Math.max(0, xpNow - xpBefore)} newBadges={newBadges} corrected={corrected} />;
+    return <Summary summary={summary} skills={skills} minutes={minutes} onHome={onHome} mode={mode} xpGained={Math.max(0, xpNow - xpBefore)} newBadges={newBadges} corrected={corrected} canDoBefore={canDoBefore} canDoNow={canDoNow} />;
   }
   if (!item) return null;
   const skill = skills[item.skillId];

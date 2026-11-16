@@ -1,5 +1,6 @@
 import { del, get, set } from 'idb-keyval';
 import type { AnswerRecord, ProgressMap } from '../engine/types';
+import type { MasteryLog } from '../engine/mastery';
 import type { SessionRecord } from '../engine/xp';
 
 export interface Settings {
@@ -13,6 +14,8 @@ export interface Saved {
   log: AnswerRecord[];
   sessions: SessionRecord[];
   settings: Settings;
+  /** Skills she can do, by day — for the week-by-week chart on My progress. */
+  masteryLog?: MasteryLog;
 }
 
 export interface Store {

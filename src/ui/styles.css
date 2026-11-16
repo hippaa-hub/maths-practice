@@ -203,3 +203,32 @@ p { margin: 0; }
 .mascot.wave img { animation: nod 1.2s ease-in-out infinite alternate; transform-origin: 50% 90%; }
 @keyframes nod { from { transform: rotate(-3deg); } to { transform: rotate(3deg); } }
 @media (prefers-reduced-motion: reduce) { .mascot.wave img { animation: none; } }
+
+/* ---- Progress she can see: skills she can do, the level map ---- */
+.cando-strip { display: flex; align-items: center; gap: 12px; width: 100%; text-align: left; font: inherit; color: inherit; cursor: pointer; background: #fff8e1; border: 2px solid var(--yellow); border-bottom-width: 4px; border-radius: var(--radius); padding: 12px 14px; }
+.cando-strip .paw { font-size: 1.5rem; }
+.cando-strip .num { font-size: 1.9rem; font-weight: 900; color: #b07d00; min-width: 1.4em; text-align: center; }
+.cando-strip b { display: block; }
+.cando-strip > span:last-child { font-size: 1.6rem; color: var(--ink-soft); }
+.good { color: var(--green-dark); }
+.cando-line { margin: 0; font-weight: 800; text-align: center; }
+.cando-hero { display: flex; align-items: center; gap: 12px; flex: 1; }
+.cando-hero .big-number { font-size: 3rem; font-weight: 900; color: #b07d00; line-height: 1; }
+.cando-hero b { display: block; font-size: 1.1rem; }
+.week-bars { display: flex; align-items: flex-end; gap: 8px; height: 120px; padding-top: 18px; }
+.week-bar { flex: 1; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 4px; }
+.week-bar i { display: block; width: 100%; max-width: 34px; border-radius: 8px 8px 4px 4px; background: var(--blue-soft); border: 2px solid var(--blue); }
+.week-bar i.now { background: var(--yellow); border-color: var(--yellow-dark); }
+.week-bar .n { font-size: 0.8rem; font-weight: 800; }
+.week-bar small { font-size: 0.7rem; color: var(--ink-soft); }
+.level-map { display: grid; gap: 10px; }
+.level { display: flex; align-items: center; gap: 12px; background: #fff; border: 2px solid var(--line); border-radius: var(--radius); padding: 10px 12px; }
+.level.working { border-color: var(--blue); }
+.level.done { background: #fff8e1; border-color: var(--yellow); }
+.level-badge { flex: none; width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; color: #fff; font-weight: 900; font-size: 1.2rem; }
+.level-text { flex: 1; display: grid; gap: 3px; min-width: 0; }
+.level-text b { font-size: 0.95rem; line-height: 1.25; }
+.level-text small { font-size: 0.75rem; }
+.level-bar { position: relative; display: block; height: 10px; border-radius: 6px; background: var(--bg); overflow: visible; }
+.level-bar i { display: block; height: 100%; border-radius: 6px; }
+.level-bar em { position: absolute; top: -3px; bottom: -3px; width: 2px; background: var(--ink-soft); border-radius: 1px; }

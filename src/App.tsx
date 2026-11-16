@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { SKILLS, SKILL_BY_ID, SKILL_METAS, type MistakeHunt, type Question } from './content';
 import { earnedBadges } from './engine/badges';
+import { canDoCount, logMastery } from './engine/mastery';
 import { addDays, dateKeyOf, daysBetween } from './engine/dates';
 import { createRng } from './engine/rng';
 import type { SessionMode, SessionSummary } from './engine/runtime';
@@ -10,6 +11,7 @@ import type { AnswerRecord, ProgressMap } from './engine/types';
 import { totalXp, type SessionRecord } from './engine/xp';
 import { emptySaved, idbStore, type Saved, type Store } from './storage/db';
 import { Home } from './ui/Home';
+import { MyProgress } from './ui/MyProgress';
 import type { Mood } from './ui/Mascot';
 import { Session } from './ui/Session';
 import { SkillMap, type MapAction } from './ui/SkillMap';
@@ -32,13 +34,14 @@ interface ActiveSession {
   seed: number;
   mode: SessionMode;
   xpBefore: number;
+  canDoBefore: number;
   badgesBefore: Set<string>;
 }
 
 export function App({ deps }: { deps?: Partial<AppDeps> }) {
   const d: AppDeps = { now: () => new Date(), store: idbStore, ...deps };
   const [saved, setSaved] = useState<Saved | null>(null);
-  const [screen, setScreen] = useState<'home' | 'map' | 'session'>('home');
+  const [screen, setScreen] = useState<'home' | 'map' | 'session' | 'progress'>('home');
   const [session, setSession] = useState<ActiveSession | null>(null);
   const savedRef = useRef<Saved | null>(null);
   const today = dateKeyOf(d.now());
@@ -55,6 +58,8 @@ export function App({ deps }: { deps?: Partial<AppDeps> }) {
       const next: Saved = { ...emptySaved(), ...(s ?? {}) };
       next.sessions ??= [];
       for (const skill of SKILLS) if (!next.progress[skill.id]) next.progress[skill.id] = newProgress(skill.id);
+      // Keep a daily record of the skills she can do, so she can see it grow week by week.
+      next.masteryLog = logMastery(next.masteryLog, canDoCount(next.progress, SKILL_METAS, today), today);
       savedRef.current = next;
       setMuted(next.settings.muted);
       setSaved(next);
@@ -69,9 +74,11 @@ export function App({ deps }: { deps?: Partial<AppDeps> }) {
   }, [saved, today]);
 
   const xp = saved ? totalXp(saved.log, saved.sessions) : 0;
+  const canDoNow = saved ? canDoCount(saved.progress, SKILL_METAS, today) : 0;
   const badges = useMemo(() => (saved ? earnedBadges({ log: saved.log, sessions: saved.sessions, progress: saved.progress, skills: SKILL_METAS }) : new Set<string>()), [saved]);
 
   function commit(next: Saved) {
+    next = { ...next, masteryLog: logMastery(next.masteryLog, canDoCount(next.progress, SKILL_METAS, today), today) };
     savedRef.current = next;
     setSaved(next);
     void d.store.save(next);
@@ -100,7 +107,7 @@ export function App({ deps }: { deps?: Partial<AppDeps> }) {
 
   function open(items: SessionItem[], mode: SessionMode, seed: number, label: string) {
     if (!saved) return;
-    setSession({ id: `${today}-${label}-${seed}`, items, seed, mode, xpBefore: xp, badgesBefore: new Set(badges) });
+    setSession({ id: `${today}-${label}-${seed}`, items, seed, mode, xpBefore: xp, canDoBefore: canDoNow, badgesBefore: new Set(badges) });
     setScreen('session');
   }
 
@@ -142,11 +149,21 @@ export function App({ deps }: { deps?: Partial<AppDeps> }) {
           onHunt={d.onHunt}
           xpBefore={session.xpBefore}
           xpNow={xp}
+          canDoBefore={session.canDoBefore}
+          canDoNow={canDoNow}
           badgesBefore={session.badgesBefore}
           badgesNow={badges}
           muted={saved.settings.muted}
           onToggleMute={toggleMute}
         />
+      </div>
+    );
+  }
+
+  if (screen === 'progress') {
+    return (
+      <div className="app">
+        <MyProgress skills={SKILL_METAS} progress={saved.progress} masteryLog={saved.masteryLog} today={today} onBack={() => setScreen('home')} />
       </div>
     );
   }
@@ -173,6 +190,9 @@ export function App({ deps }: { deps?: Partial<AppDeps> }) {
         canStart={preview.length > 0}
         onStart={startMix}
         onMap={() => setScreen('map')}
+        onProgress={() => setScreen('progress')}
+        canDo={canDoNow}
+        masteryLog={saved.masteryLog}
         xp={xp}
         badges={badges}
         muted={saved.settings.muted}
