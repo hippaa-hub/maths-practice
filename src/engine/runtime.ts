@@ -42,7 +42,7 @@ export function answerCurrent(
   session: RunningSession,
   progress: ProgressMap,
   outcome: Outcome,
-  extra: { level: 1 | 2 | 3; timeMs: number; misconception?: string },
+  extra: { level: 1 | 2 | 3; timeMs: number; misconception?: string; leftApp?: boolean },
 ): { session: RunningSession; progress: ProgressMap; record: AnswerRecord; result: ItemResult } {
   const item = currentItem(session);
   if (!item) throw new Error('Session is already finished');
@@ -70,6 +70,7 @@ export function answerCurrent(
     sessionId: session.id,
     source: practice ? 'practice' : item.kind === 'mistakeHunt' ? 'mistakeHunt' : 'mix',
     retry: item.reason === 'retry' || undefined,
+    leftApp: extra.leftApp || undefined,
   };
   return {
     session: { ...session, items, retried, index: session.index + 1, results: [...session.results, result] },

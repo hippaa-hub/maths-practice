@@ -13,6 +13,8 @@ export interface Saved {
   progress: ProgressMap;
   log: AnswerRecord[];
   sessions: SessionRecord[];
+  /** Keys of every question shown on this device, so none is ever repeated. */
+  seen: string[];
   settings: Settings;
   /** Skills she can do, by day — for the week-by-week chart on My progress. */
   masteryLog?: MasteryLog;
@@ -30,7 +32,7 @@ const KEY = 'adele-maths-v1';
 export const DEFAULT_SETTINGS: Settings = { name: 'Adele', muted: false };
 
 export function emptySaved(): Saved {
-  return { version: 1, progress: {}, log: [], sessions: [], settings: { ...DEFAULT_SETTINGS } };
+  return { version: 1, progress: {}, log: [], sessions: [], seen: [], settings: { ...DEFAULT_SETTINGS } };
 }
 
 /** Progress lives in the browser's IndexedDB on this device only. Nothing leaves the phone. */

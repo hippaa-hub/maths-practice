@@ -4,7 +4,8 @@ import type { DateKey } from '../engine/dates';
 import type { Rng } from '../engine/rng';
 import { answerCurrent, currentItem, finishCheck, finishLesson, isFinished, startSession, summarise, type RunningSession, type SessionMode, type SessionSummary } from '../engine/runtime';
 import type { SessionItem } from '../engine/session';
-import type { AnswerRecord, Outcome, ProgressMap } from '../engine/types';
+import type { AnswerRecord, Level, Outcome, ProgressMap } from '../engine/types';
+import { pickFresh, seenKey } from '../engine/fresh';
 import { Lesson } from './Lesson';
 import { MistakeHuntView } from './MistakeHuntView';
 import { QuestionView } from './QuestionView';
@@ -23,6 +24,9 @@ interface Props {
   onHome: () => void;
   onQuestion?: (q: Question) => void;
   onHunt?: (h: MistakeHunt) => void;
+  /** Never repeat a question: the app remembers every question shown on this device. */
+  isSeen?: (key: string) => boolean;
+  markSeen?: (key: string) => void;
   mode?: SessionMode;
   onFinish?: (summary: SessionSummary, minutes: number) => void;
   xpBefore: number;
@@ -36,7 +40,7 @@ interface Props {
   onToggleMute: () => void;
 }
 
-export function Session({ sessionId, items, progress: initialProgress, skills, today, rng, onRecord, onHome, onQuestion, onHunt, mode = 'mix', onFinish, xpBefore, xpNow, canDoBefore, canDoNow, badgesBefore, badgesNow, muted, onToggleMute }: Props) {
+export function Session({ sessionId, items, progress: initialProgress, skills, today, rng, onRecord, onHome, onQuestion, onHunt, isSeen, markSeen, mode = 'mix', onFinish, xpBefore, xpNow, canDoBefore, canDoNow, badgesBefore, badgesNow, muted, onToggleMute }: Props) {
   const [running, setRunning] = useState<RunningSession>(() => startSession(sessionId, today, items, Date.now(), mode));
   const [progress, setProgress] = useState(initialProgress);
   const [elapsed, setElapsed] = useState(0);
@@ -44,12 +48,18 @@ export function Session({ sessionId, items, progress: initialProgress, skills, t
   const [question, setQuestion] = useState<Question | null>(() => makeQuestion(items[0]));
   const [hunt, setHunt] = useState<MistakeHunt | null>(() => makeHunt(items[0]));
 
+  /** A question she has not seen before (same skill and level, different numbers). */
+  function fresh(skill: Skill, level: Level): Question {
+    const q = pickFresh(() => skill.generate(level, rng), (key) => isSeen?.(key) ?? false);
+    markSeen?.(seenKey(q.skillId, q.text));
+    onQuestion?.(q);
+    return q;
+  }
+
   function makeQuestion(item: SessionItem | undefined): Question | null {
     if (!item || item.kind !== 'question') return null;
     const level = initialProgress[item.skillId]?.level ?? 1;
-    const q = skills[item.skillId].generate(level, rng);
-    onQuestion?.(q);
-    return q;
+    return fresh(skills[item.skillId], level);
   }
 
   function makeHunt(item: SessionItem | undefined): MistakeHunt | null {
@@ -66,9 +76,9 @@ export function Session({ sessionId, items, progress: initialProgress, skills, t
     else { setQuestion(makeQuestion(currentItem(next))); setHunt(makeHunt(currentItem(next))); }
   }
 
-  function logExtra(skillId: string, outcome: Outcome, timeMs: number, source: 'solo' | 'faded' | 'check', nextProgress = progress) {
+  function logExtra(skillId: string, outcome: Outcome, timeMs: number, source: 'solo' | 'faded' | 'check', leftApp = false, nextProgress = progress) {
     const record: AnswerRecord = {
-      skillId, date: today, level: 1, correct: outcome !== 'miss', hintUsed: outcome === 'hint', timeMs, sessionId, source,
+      skillId, date: today, level: 1, correct: outcome !== 'miss', hintUsed: outcome === 'hint', timeMs, sessionId, source, leftApp: leftApp || undefined,
     };
     setElapsed((e) => e + timeMs);
     onRecord(record, nextProgress);
@@ -106,10 +116,9 @@ export function Session({ sessionId, items, progress: initialProgress, skills, t
         <Lesson
           key={item.id}
           skill={skill}
-          rng={rng}
-          onQuestion={onQuestion}
+          generate={(level) => fresh(skill, level)}
           onFaded={(correct, timeMs) => logExtra(skill.id, correct ? 'correct' : 'miss', timeMs, 'faded')}
-          onSolo={(_q, outcome, timeMs) => logExtra(skill.id, outcome, timeMs, 'solo')}
+          onSolo={(_q, outcome, timeMs, leftApp) => logExtra(skill.id, outcome, timeMs, 'solo', leftApp)}
           onDone={() => {
             const r = finishLesson(running, progress);
             onRecord(null, r.progress);
@@ -121,8 +130,8 @@ export function Session({ sessionId, items, progress: initialProgress, skills, t
           key={item.id}
           hunt={hunt}
           skillTitle={skill.title}
-          onDone={({ outcome, timeMs }) => {
-            const r = answerCurrent(running, progress, outcome, { level: progress[skill.id]?.level ?? 1, timeMs });
+          onDone={({ outcome, timeMs, leftApp }) => {
+            const r = answerCurrent(running, progress, outcome, { level: progress[skill.id]?.level ?? 1, timeMs, leftApp });
             setElapsed((e) => e + timeMs);
             onRecord(r.record, r.progress);
             moveOn(r.session, r.progress);
@@ -132,9 +141,8 @@ export function Session({ sessionId, items, progress: initialProgress, skills, t
         <QuickCheck
           key={item.id}
           skill={skill}
-          rng={rng}
-          onQuestion={onQuestion}
-          onAnswer={(_q, outcome, timeMs) => logExtra(skill.id, outcome, timeMs, 'check')}
+          generate={(level) => fresh(skill, level)}
+          onAnswer={(_q, outcome, timeMs, leftApp) => logExtra(skill.id, outcome, timeMs, 'check', leftApp)}
           onDone={(correct) => {
             const r = finishCheck(running, progress, correct);
             onRecord(null, r.progress);
@@ -148,8 +156,8 @@ export function Session({ sessionId, items, progress: initialProgress, skills, t
           skillTitle={skill.title}
           misconceptions={skill.misconceptions}
           example={(progress[skill.id]?.box ?? 0) === 2 ? skill.examples[0] : undefined}
-          onDone={({ outcome, misconception, timeMs }) => {
-            const r = answerCurrent(running, progress, outcome, { level: question.level, timeMs, misconception });
+          onDone={({ outcome, misconception, timeMs, leftApp }) => {
+            const r = answerCurrent(running, progress, outcome, { level: question.level, timeMs, misconception, leftApp });
             setElapsed((e) => e + timeMs);
             onRecord(r.record, r.progress);
             moveOn(r.session, r.progress);

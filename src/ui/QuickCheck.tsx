@@ -1,30 +1,24 @@
 import { useState } from 'react';
 import type { Question, Skill } from '../content/types';
-import type { Rng } from '../engine/rng';
 import { CHECK_PASS, CHECK_QUESTIONS } from '../engine/spacing';
-import type { Outcome } from '../engine/types';
+import type { Level, Outcome } from '../engine/types';
 import { Button } from './Button';
 import { Mascot } from './Mascot';
 import { QuestionView } from './QuestionView';
 
 interface Props {
   skill: Skill;
-  rng: Rng;
-  onAnswer: (q: Question, outcome: Outcome, timeMs: number) => void;
+  generate: (level: Level) => Question;
+  onAnswer: (q: Question, outcome: Outcome, timeMs: number, leftApp?: boolean) => void;
   onDone: (correct: number) => void;
-  onQuestion?: (q: Question) => void;
 }
 
 /** Three questions on a skill the class has already taught. 2 right = straight into the review cycle. */
-export function QuickCheck({ skill, rng, onAnswer, onDone, onQuestion }: Props) {
+export function QuickCheck({ skill, generate, onAnswer, onDone }: Props) {
   const [n, setN] = useState(0);
   const [correct, setCorrect] = useState(0);
   const [finished, setFinished] = useState(false);
-  const [q, setQ] = useState<Question>(() => {
-    const first = skill.generate(1, rng);
-    onQuestion?.(first);
-    return first;
-  });
+  const [q, setQ] = useState<Question>(() => generate(1));
 
   if (finished) {
     const passed = correct >= CHECK_PASS;
@@ -58,14 +52,12 @@ export function QuickCheck({ skill, rng, onAnswer, onDone, onQuestion }: Props) 
         skillTitle={skill.title}
         misconceptions={skill.misconceptions}
         continueLabel={n + 1 >= CHECK_QUESTIONS ? 'See result' : 'Continue'}
-        onDone={({ outcome, timeMs }) => {
-          onAnswer(q, outcome, timeMs);
+        onDone={({ outcome, timeMs, leftApp }) => {
+          onAnswer(q, outcome, timeMs, leftApp);
           const c = correct + (outcome === 'correct' ? 1 : 0);
           setCorrect(c);
           if (n + 1 >= CHECK_QUESTIONS) { setFinished(true); return; }
-          const next = skill.generate(1, rng);
-          onQuestion?.(next);
-          setQ(next);
+          setQ(generate(1));
           setN(n + 1);
         }}
       />

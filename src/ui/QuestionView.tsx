@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { Example, Question } from '../content/types';
 import { checkAnswer } from '../engine/answers';
 import type { Outcome } from '../engine/types';
@@ -13,6 +13,22 @@ export interface QuestionResult {
   outcome: Outcome;
   misconception?: string;
   timeMs: number;
+  /** She left the app while the question was open. */
+  leftApp?: boolean;
+}
+
+/** Watches for the app being hidden (another app, a calculator, the home screen) while a question is open. */
+export function useLeftApp(active: boolean): boolean {
+  const [left, setLeft] = useState(false);
+  useEffect(() => {
+    if (!active || left) return;
+    const onHide = () => { if (document.hidden) setLeft(true); };
+    const onBlur = () => setLeft(true);
+    document.addEventListener('visibilitychange', onHide);
+    window.addEventListener('blur', onBlur);
+    return () => { document.removeEventListener('visibilitychange', onHide); window.removeEventListener('blur', onBlur); };
+  }, [active, left]);
+  return left;
 }
 
 interface Props {
@@ -32,6 +48,7 @@ export function QuestionView({ question, skillTitle, misconceptions, example, on
   const [result, setResult] = useState<{ correct: boolean; message?: string; misconception?: string } | null>(null);
   const started = useRef(Date.now());
   const isChoice = question.answer.kind === 'choice';
+  const left = useLeftApp(!result);
 
   function check() {
     if (!typed.trim() || result) return;
@@ -44,8 +61,8 @@ export function QuestionView({ question, skillTitle, misconceptions, example, on
 
   function finish() {
     if (!result) return;
-    const outcome: Outcome = !result.correct ? 'miss' : hintShown ? 'hint' : 'correct';
-    onDone({ outcome, misconception: result.misconception, timeMs: Date.now() - started.current });
+    const outcome: Outcome = !result.correct ? 'miss' : hintShown || left ? 'hint' : 'correct';
+    onDone({ outcome, misconception: result.misconception, timeMs: Date.now() - started.current, leftApp: left });
   }
 
   return (
@@ -55,6 +72,10 @@ export function QuestionView({ question, skillTitle, misconceptions, example, on
         <p className="qtext">{question.text}</p>
         {question.picture && (!question.revealPicture || result) && <Picture spec={question.picture} />}
       </div>
+
+      {left && !result && (
+        <div className="card orange" role="status"><b>You left the app.</b> You can still answer, but this one counts as "with help": no step up, and it comes back tomorrow.</div>
+      )}
 
       {hintShown && (
         <div className="card blue">
@@ -104,7 +125,8 @@ export function QuestionView({ question, skillTitle, misconceptions, example, on
           <div className="row">
             <Mascot mood={result.correct ? 'cheer' : 'think'} size={56} />
             <div className="grow">
-              <h2>{result.correct ? (hintShown ? 'Got it, with a hint' : 'Nice!') : 'Not yet'}</h2>
+              <h2>{result.correct ? (left ? 'Right — counts as "with help"' : hintShown ? 'Got it, with a hint' : 'Nice!') : 'Not yet'}</h2>
+              {result.correct && left && <p>You left the app during this question, so it does not count as done on your own. It comes back tomorrow.</p>}
               {!result.correct && <p>{result.message ?? 'Here is the method:'}</p>}
               {!result.correct && <p><b>The answer is {question.answerText}.</b></p>}
             </div>

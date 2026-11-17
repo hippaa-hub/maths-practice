@@ -8,3 +8,4 @@ export * from './answers';
 export * from './stats';
 export * from './xp';
 export * from './badges';
+export * from './fresh';

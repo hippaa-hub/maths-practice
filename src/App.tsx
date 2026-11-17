@@ -9,6 +9,7 @@ import { buildSession, type BuildOptions, type SessionItem } from './engine/sess
 import { newProgress } from './engine/spacing';
 import type { AnswerRecord, ProgressMap } from './engine/types';
 import { totalXp, type SessionRecord } from './engine/xp';
+import { remember } from './engine/fresh';
 import { emptySaved, idbStore, type Saved, type Store } from './storage/db';
 import { Home } from './ui/Home';
 import { MyProgress } from './ui/MyProgress';
@@ -57,6 +58,7 @@ export function App({ deps }: { deps?: Partial<AppDeps> }) {
       if (!alive) return;
       const next: Saved = { ...emptySaved(), ...(s ?? {}) };
       next.sessions ??= [];
+      next.seen ??= [];
       for (const skill of SKILLS) if (!next.progress[skill.id]) next.progress[skill.id] = newProgress(skill.id);
       // Keep a daily record of the skills she can do, so she can see it grow week by week.
       next.masteryLog = logMastery(next.masteryLog, canDoCount(next.progress, SKILL_METAS, today), today);
@@ -143,6 +145,8 @@ export function App({ deps }: { deps?: Partial<AppDeps> }) {
           rng={createRng(session.seed + 1)}
           mode={session.mode}
           onRecord={(record, progress) => persist(progress, record ?? undefined)}
+          isSeen={(key) => (savedRef.current?.seen ?? []).includes(key)}
+          markSeen={(key) => { const base = savedRef.current; if (base) commit({ ...base, seen: remember(base.seen ?? [], key) }); }}
           onFinish={finishSession}
           onHome={() => { setScreen(session.mode === 'mix' ? 'home' : 'map'); setSession(null); }}
           onQuestion={d.onQuestion}

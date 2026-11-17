@@ -60,6 +60,8 @@ export interface AnswerRecord {
   source: 'mix' | 'solo' | 'faded' | 'practice' | 'mistakeHunt' | 'lesson' | 'check';
   /** True when this was the second go at a skill missed earlier in the same session. */
   retry?: boolean;
+  /** True when she left the app while the question was open: a right answer then counts as 'with help'. */
+  leftApp?: boolean;
 }
 
 export type ProgressMap = Record<SkillId, SkillProgress>;

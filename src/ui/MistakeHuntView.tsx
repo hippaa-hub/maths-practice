@@ -3,12 +3,13 @@ import type { MistakeHunt } from '../content/types';
 import type { Outcome } from '../engine/types';
 import { Button } from './Button';
 import { Mascot } from './Mascot';
+import { useLeftApp } from './QuestionView';
 import { play } from './sounds';
 
 interface Props {
   hunt: MistakeHunt;
   skillTitle: string;
-  onDone: (r: { outcome: Outcome; timeMs: number }) => void;
+  onDone: (r: { outcome: Outcome; timeMs: number; leftApp?: boolean }) => void;
 }
 
 /** A solved problem with one wrong step: tap the wrong step, then pick the fix. */
@@ -19,6 +20,7 @@ export function MistakeHuntView({ hunt, skillTitle, onDone }: Props) {
   const [fix, setFix] = useState<string>('');
   const [result, setResult] = useState<'ok' | 'notyet' | null>(null);
   const started = useRef(Date.now());
+  const left = useLeftApp(!result);
 
   function tap(i: number) {
     if (found || result) return;
@@ -35,8 +37,8 @@ export function MistakeHuntView({ hunt, skillTitle, onDone }: Props) {
   }
 
   function finish() {
-    const outcome: Outcome = result === 'ok' ? (wrongTaps === 0 ? 'correct' : 'hint') : 'miss';
-    onDone({ outcome, timeMs: Date.now() - started.current });
+    const outcome: Outcome = result === 'ok' ? (wrongTaps === 0 && !left ? 'correct' : 'hint') : 'miss';
+    onDone({ outcome, timeMs: Date.now() - started.current, leftApp: left });
   }
 
   return (
@@ -63,6 +65,10 @@ export function MistakeHuntView({ hunt, skillTitle, onDone }: Props) {
           </button>
         ))}
       </div>
+
+      {left && !result && (
+        <div className="card orange" role="status"><b>You left the app.</b> This one now counts as "with help".</div>
+      )}
 
       {!found && lastTap !== null && (
         <div className="card blue" role="status">That step is fine — look again. Which line does not follow the rule?</div>

@@ -1,8 +1,7 @@
 import { useState } from 'react';
 import type { FadedStep, Question, Skill } from '../content/types';
 import { checkAnswer } from '../engine/answers';
-import type { Rng } from '../engine/rng';
-import type { Outcome } from '../engine/types';
+import type { Level, Outcome } from '../engine/types';
 import { AnswerInput } from './AnswerInput';
 import { Button } from './Button';
 import { Picture } from './Picture';
@@ -14,15 +13,15 @@ const SOLO_COUNT = 3;
 
 interface Props {
   skill: Skill;
-  rng: Rng;
-  onSolo: (q: Question, outcome: Outcome, timeMs: number) => void;
+  /** Makes a question she has not seen before. */
+  generate: (level: Level) => Question;
+  onSolo: (q: Question, outcome: Outcome, timeMs: number, leftApp?: boolean) => void;
   onFaded: (correct: boolean, timeMs: number) => void;
   onDone: () => void;
-  onQuestion?: (q: Question) => void;
 }
 
 /** Three stages for a new skill: Learn, Try with help, Solo. */
-export function Lesson({ skill, rng, onSolo, onFaded, onDone, onQuestion }: Props) {
+export function Lesson({ skill, generate, onSolo, onFaded, onDone }: Props) {
   const [stage, setStage] = useState<Stage>('learn');
   return (
     <div className="stack">
@@ -35,7 +34,7 @@ export function Lesson({ skill, rng, onSolo, onFaded, onDone, onQuestion }: Prop
       </div>
       {stage === 'learn' && <Learn skill={skill} onNext={() => setStage('faded')} />}
       {stage === 'faded' && <Faded skill={skill} onFaded={onFaded} onNext={() => setStage('solo')} />}
-      {stage === 'solo' && <Solo skill={skill} rng={rng} onSolo={onSolo} onDone={onDone} onQuestion={onQuestion} />}
+      {stage === 'solo' && <Solo skill={skill} generate={generate} onSolo={onSolo} onDone={onDone} />}
     </div>
   );
 }
@@ -158,13 +157,9 @@ function Faded({ skill, onFaded, onNext }: { skill: Skill; onFaded: (correct: bo
   );
 }
 
-function Solo({ skill, rng, onSolo, onDone, onQuestion }: { skill: Skill; rng: Rng; onSolo: Props['onSolo']; onDone: () => void; onQuestion?: (q: Question) => void }) {
+function Solo({ skill, generate, onSolo, onDone }: { skill: Skill; generate: Props['generate']; onSolo: Props['onSolo']; onDone: () => void }) {
   const [n, setN] = useState(0);
-  const [q, setQ] = useState<Question>(() => {
-    const first = skill.generate(1, rng);
-    onQuestion?.(first);
-    return first;
-  });
+  const [q, setQ] = useState<Question>(() => generate(1));
   return (
     <div className="stack">
       <p className="muted small center">Solo · question {n + 1} of {SOLO_COUNT}</p>
@@ -174,12 +169,10 @@ function Solo({ skill, rng, onSolo, onDone, onQuestion }: { skill: Skill; rng: R
         skillTitle={skill.title}
         misconceptions={skill.misconceptions}
         continueLabel={n + 1 >= SOLO_COUNT ? 'Finish lesson' : 'Continue'}
-        onDone={({ outcome, timeMs }) => {
-          onSolo(q, outcome, timeMs);
+        onDone={({ outcome, timeMs, leftApp }) => {
+          onSolo(q, outcome, timeMs, leftApp);
           if (n + 1 >= SOLO_COUNT) { onDone(); return; }
-          const next = skill.generate(1, rng);
-          onQuestion?.(next);
-          setQ(next);
+          setQ(generate(1));
           setN(n + 1);
         }}
       />

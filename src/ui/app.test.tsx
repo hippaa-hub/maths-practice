@@ -162,18 +162,35 @@ describe('playing a full Daily Mix', () => {
     await screen.findByRole('heading', { name: /skill map/i });
     await user.click(screen.getByRole('button', { name: /^Percent of an amount: Learning$/ }));
     await user.click(await screen.findByRole('button', { name: /practise \(3 questions\)/i }));
+    const seenTexts: string[] = [];
     for (let i = 0; i < 3; i++) {
       await screen.findByRole('button', { name: /^check$/i });
       const q = current!;
       expect(q.skillId).toBe('pct-of-amount');
+      seenTexts.push(q.text);
+      if (i === 1) {
+        // She leaves the app (another app, a calculator) while the question is open.
+        Object.defineProperty(document, 'hidden', { value: true, configurable: true });
+        document.dispatchEvent(new Event('visibilitychange'));
+        await screen.findByText(/you left the app/i);
+        Object.defineProperty(document, 'hidden', { value: false, configurable: true });
+      }
       await user.type(screen.getByRole('textbox', { name: /your answer/i }), fmt(q.answer.value));
       await user.click(screen.getByRole('button', { name: /^check$/i }));
-      await screen.findByText('Nice!');
+      await screen.findByText(i === 1 ? /counts as "with help"/i : 'Nice!');
       await user.click(screen.getByRole('button', { name: /continue/i }));
     }
     await screen.findByText(/practice done!/i);
     expect(store.current!.progress['pct-of-amount'].box).toBe(2); // unchanged
-    expect(store.current!.log.filter((r) => r.source === 'practice')).toHaveLength(3);
+    const practice = store.current!.log.filter((r) => r.source === 'practice');
+    expect(practice).toHaveLength(3);
+    // The question she left the app on is right but counts as 'with help'.
+    expect(practice[1]).toMatchObject({ correct: true, hintUsed: true, leftApp: true });
+    expect(practice[0].leftApp).toBeUndefined();
+    // Never the same question twice: all three were different and are now remembered.
+    expect(new Set(seenTexts).size).toBe(3);
+    expect(store.current!.seen).toHaveLength(3);
+    expect(store.current!.seen.every((k) => k.startsWith('pct-of-amount|'))).toBe(true);
     await waitFor(() => expect(store.current!.sessions).toHaveLength(1));
     expect(store.current!.sessions[0].mode).toBe('practice');
     // XP was earned even though no box moved.
