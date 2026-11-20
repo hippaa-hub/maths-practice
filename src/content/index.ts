@@ -10,6 +10,8 @@ import { anglesParallel } from './skills/angles-parallel';
 import { anglesTriangle } from './skills/angles-triangle';
 import { areaTriangle } from './skills/area-triangle';
 import { likeTerms } from './skills/like-terms';
+import { multiplyTerms } from './skills/multiply-terms';
+import { expandBrackets } from './skills/expand-brackets';
 import { surfaceArea } from './skills/surface-area';
 import { fractionsAddSub } from './skills/fractions-add-sub';
 import { fractionsMulDiv } from './skills/fractions-mul-div';
@@ -98,6 +100,11 @@ const INTRO_ORDER: Skill[] = [
   squaresOfNegatives,
   nthTerm,
   explainRule,
+  // Class topic from 20 Nov: "Operations with algebraic expressions" (classwork due 27 Nov).
+  // Like terms were taught in September; the next two practise the topic (teacher's pages not posted).
+  likeTerms,
+  multiplyTerms,
+  expandBrackets,
   fractionsSimplify,
   fractionOfAmount,
   fractionsAddSub,
@@ -106,8 +113,7 @@ const INTRO_ORDER: Skill[] = [
   factorsMultiples,
   divisibility,
   factorsPrimes,
-  // September geometry and early algebra (taught): quick checks, after Unit 1 and the foundations
-  likeTerms,
+  // September geometry (taught): quick checks, after Unit 1 and the foundations
   anglesLinePoint,
   anglesTriangle,
   anglesParallel,
